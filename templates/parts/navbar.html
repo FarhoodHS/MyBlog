@@ -20,26 +20,14 @@
                 <a class="nav-link" href="{% url 'projects' %}">Projects</a>
             </li>
         </ul>
+        <form action="{% url 'posts:post_list' %}" method="GET" class="form-inline my-2 my-lg-0">{% csrf_token %}
+            <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search the Blog"
+                value="{{ request.GET.q }}" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search <span
+                    class="fas fa-search"></span></button>
+        </form>
         <div class="navbar-nav">
-            {% if user.is_authenticated %}
-            <form action="{% url 'accounts:logout' %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline-primary mr-3">Logout of {{ user.username }}</button>
-            </form>
-            {% if user.is_staff or user.is_superuser %}
-            <a href="{% url 'posts:post_create' %}" class="btn btn-primary">
-                <span class="fas fa-plus"></span> New Post
-            </a>
-            {% endif %}
-            {% else %}
-            <button type="button" class="btn btn-outline-primary mr-3" data-toggle="modal" data-target="#signupModal">
-                Login
-            </button>
-            <a href="{% url 'accounts:signup' %}" class="btn btn-primary">
-                Signup Now!
-            </a>
-            <!-- <a class="nav-link" href="#">Signup</a> -->
-            {% endif %}
+
         </div>
     </div>
 </nav>

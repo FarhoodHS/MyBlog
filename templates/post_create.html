@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
+
 {% block title %}
 Create
 {% endblock title %}
 
 {% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'posts:post_list' %}">All Posts</a></li>
+        <li class="breadcrumb-item active" aria-current="page">New Post</li>
+    </ol>
+</nav>
 <div class="container">
     <div class="row">
         <div class="col col-6">
@@ -59,6 +66,5 @@ Create
         </div>
         </form>
     </div>
-</div>
 </div>
 {% endblock content %}

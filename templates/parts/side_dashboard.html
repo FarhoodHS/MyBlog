@@ -1,0 +1,79 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">
+            {% if user.is_authenticated %}
+            {% if user.first_name %}
+            {{ user.first_name }}'s Dashboard
+            {% else %}
+            {{ user.username }}'s Dashboard
+            {% endif %}
+            {% else %}
+            Hi Mr./Ms. Someone
+            {% endif %}
+        </li>
+    </ol>
+</nav>
+<div class="sticky-top">
+    {% if not user.is_authenticated %}
+    <div class="card card-body">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="formGroupExampleInput">Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput2">Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <div class="row justify-content-end">
+                <div class="col">
+                    <a class="btn btn-outline-primary" href="{% url 'accounts:signup' %}">Need an account?</a>
+                </div>
+                <div class="col col-auto">
+                    <button type="submit" class="btn btn-primary">Log me in</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div class="card shadow rounded">
+        {% if user.profile_pic %}
+        <img src="{{ user.profile_pic.url }}" class="card-img-top" alt="profile-pic">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">
+                {% if user.first_name %}
+                {{ user.first_name }}
+                {% else %}
+                @{{ user.username }}
+                {% endif %}
+            </h5>
+            {% if user.is_superuser or user.is_staff %}
+            <p class="card-text">You have made
+                {% if user.post_set.count == 0 %}
+                no posts
+                {% elif user.post_set.count == 1 %}
+                <a href="{% url 'posts:user_post_list' user.username %}" class="text-decoration-none">1 post</a>
+                {% else %}
+                <a href="{% url 'posts:user_post_list' user.username %}" class="text-decoration-none">
+                    {{ user.post_set.count }} posts</a>
+                {% endif %}</p>
+            {% endif %}
+            <br>
+            <div class="row">
+                <form class="col" action="{% url 'accounts:logout' %}" method="POST">{% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary">Logout</button>
+                </form>
+                {% if user.is_superuser or user.is_staff %}
+                <div class="col col-auto">
+                    <a href="{% url 'posts:post_create' %}" class="btn btn-primary"><span class="fas fa-plus"></span>
+                        New
+                        Post</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>

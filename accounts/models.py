@@ -2,10 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
-def upload_location(instance):
-    return f"profile_pics/{instance.user.username}"
-
-
 class ProfileManager(BaseUserManager):
     def create_user(self, username, email, password=None):
         if not email:
@@ -39,7 +35,7 @@ class Profile(AbstractBaseUser):
     username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(verbose_name='Email', unique=True)
     profile_pic = models.ImageField(
-        upload_to=upload_location, verbose_name='Avatar', blank=True)
+        upload_to='profile-pics', verbose_name='Avatar', blank=True)
     date_joined = models.DateTimeField(
         verbose_name='Date Joined', auto_now_add=True)
     last_login = models.DateTimeField(verbose_name='Last Login', auto_now=True)

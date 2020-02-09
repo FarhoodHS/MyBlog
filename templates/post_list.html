@@ -6,15 +6,19 @@ All posts
 {% endblock title %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page">All Posts</li>
-            </ol>
-        </nav>
-    </div>
-</div>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% if 'user/' in request.path %}
+        <li class="breadcrumb-item"><a href="{% url 'posts:post_list' %}">All Posts</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ user_post }}'s posts</li>
+        {% elif request.GET.q %}
+        <li class="breadcrumb-item"><a href="{% url 'posts:post_list' %}">All Posts</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Search results for "{{ request.GET.q }}"</li>
+        {% else %}
+        <li class="breadcrumb-item active" aria-current="page">All Posts</li>
+        {% endif %}
+    </ol>
+</nav>
 {% include "parts/alerts.html" %}
 <div class="row justify-content-center mt-3">
     <div class="col align-self-center">
@@ -35,10 +39,11 @@ All posts
                             {% if post.publish > current.date %}
                             <span class="badge badge-pill badge-info">Future</span>{% endif %}
                         </h5>
-                        <footer class="blockquote-footer">via <cite
-                                title="Source Title">{{ post.author.username }}</cite>
+                        <footer class="blockquote-footer">via <cite title="Source Title"><a class="text-secondary"
+                                    href="{% url 'posts:user_post_list' post.author.username %}">{{ post.author.username }}</a></cite>
                             {{ post.timestamp|naturaltime }}
                         </footer>
+                        <br>
                         <p class="card-text">{{ post.content|truncatewords:21 }}</p>
                         <a href="{% url 'posts:post_detail' post.slug %}" class="btn btn-primary">view</a>
                     </div>
@@ -55,7 +60,8 @@ All posts
         <ul class="pagination justify-content-center">
             {% if posts.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ posts.previous_page_number }}" aria-label="Previous">
+                <a class="page-link" href="?page={{ posts.previous_page_number }}&q={{ request.GET.q }}"
+                    aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -69,7 +75,7 @@ All posts
 
             {% for num in paginator.page_range %}
             {% if num != posts.number %}
-            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ request.GET.q }}">{{ num }}</a></li>
             {% else %}
             <li class="page-item active" aria-current="page">
                 <span class="page-link">
@@ -81,7 +87,7 @@ All posts
 
                 {% if posts.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ posts.next_page_number }}" aria-label="Next">
+                <a class="page-link" href="?page={{ posts.next_page_number }}&q={{ request.GET.q }}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

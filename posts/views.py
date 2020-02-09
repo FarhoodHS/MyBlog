@@ -1,16 +1,17 @@
 from django.contrib import messages, auth
 from django.core.paginator import Paginator
-from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Q
 from django.http import Http404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
+from .forms import PostCreateForm
+from .models import Post
 from .times import (
     years,
     months,
     days
 )
-from .models import Post
-from .forms import PostCreateForm
 
 
 def post_list(request):
@@ -20,15 +21,42 @@ def post_list(request):
         user = auth.authenticate(username=username, password=password)
         if user is not None:
             auth.login(request, user)
+        else:
+            messages.error(request, 'Username or Password is incorrect :x')
+            return redirect('posts:post_list')
     if request.user.is_staff or request.user.is_superuser:
         qs_list = Post.objects.all()
     else:
         qs_list = Post.objects.active()
+    q = request.GET.get('q')
+    if q:
+        qs_list = qs_list.filter(
+            Q(title__icontains=q) |
+            Q(author__username__icontains=q) |
+            Q(content__icontains=q)
+        ).distinct()
     paginator = Paginator(qs_list, 5)
     page = request.GET.get('page')
     qs = paginator.get_page(page)
     context = {
         'posts': qs,
+        'paginator': paginator,
+        'current': timezone.now()
+    }
+    return render(request, 'post_list.html', context)
+
+
+def user_post_list(request, author):
+    if request.user.username == author or request.user.is_superuser:
+        qs_list = Post.objects.filter(author__username=author)
+    else:
+        qs_list = Post.objects.active().filter(author__username=author)
+    paginator = Paginator(qs_list, 5)
+    page = request.GET.get('page')
+    qs = paginator.get_page(page)
+    context = {
+        'posts': qs,
+        'user_post': author,
         'paginator': paginator,
         'current': timezone.now()
     }
@@ -90,6 +118,7 @@ def post_update(request, post_slug):
         instance.save()
         return redirect('posts:post_detail', post_slug=instance.slug)
     context = {
+        'post': instance,
         'form': form,
         'years': years,
         'months': months,
