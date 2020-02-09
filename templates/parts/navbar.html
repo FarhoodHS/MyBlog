@@ -1,0 +1,82 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand ml-3" href="{% url 'home' %}">
+        <img src="{% static 'Django_Logo.png' %}" height="30" class="d-inline-block align-top" alt="">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li {% if '/' == request.path %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
+                <a class="nav-link" href="{% url 'home' %}">Home</a>
+            </li>
+            <li {% if 'posts' in request.path %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
+                <a class="nav-link" href="{% url 'posts:post_list' %}">Blog</a>
+            </li>
+            <li {% if 'projects' in request.path %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
+                <a class="nav-link" href="{% url 'projects' %}">Projects</a>
+            </li>
+        </ul>
+        <div class="navbar-nav">
+            {% if user.is_authenticated %}
+            <form action="{% url 'accounts:logout' %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-primary mr-3">Logout of {{ user.username }}</button>
+            </form>
+            {% if user.is_staff or user.is_superuser %}
+            <a href="{% url 'posts:post_create' %}" class="btn btn-primary">
+                <span class="fas fa-plus"></span> New Post
+            </a>
+            {% endif %}
+            {% else %}
+            <button type="button" class="btn btn-outline-primary mr-3" data-toggle="modal" data-target="#signupModal">
+                Login
+            </button>
+            <a href="{% url 'accounts:signup' %}" class="btn btn-primary">
+                Signup Now!
+            </a>
+            <!-- <a class="nav-link" href="#">Signup</a> -->
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- Login modal -->
+<div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="formGroupExampleInput">Username</label>
+                        <input type="text" name="username" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="formGroupExampleInput2">Password</label>
+                        <input type="password" name="password" class="form-control">
+                    </div>
+                    <div class="row justify-content-end">
+                        <div class="col">
+                            <a href="{% url 'accounts:signup' %}">Need an account?</a>
+                        </div>
+                        <div class="col col-auto">
+                            <button type="submit" class="btn btn-primary">Log me in</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

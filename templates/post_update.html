@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}
+Update
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col col-9">
+            <h3>Update Post</h3><br>
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" value="{{ form.initial.title }}" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea name="content" rows="10" class="form-control"
+                        required>{{ form.initial.content }}</textarea>
+                </div>
+                <div class="custom-file mb-3">
+                    <input type="file" name="image" id="customFile" accept="image/*" class="btn">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="draft" id="defaultCheck1"
+                        {% if form.initial.draft %} checked {% endif %}>
+                    <label class="form-check-label" for="defaultCheck1">
+                        Draft
+                    </label>
+                </div><br>
+                <label for="inlineFormCustomSelect">Publish Date</label>
+                <div class="form-row" id="inlineFormCustomSelect">
+                    <div class="col-md-3 mb-3">
+                        <select class="custom-select mr-sm-2" name="publish_month" required id="id_publish_month">
+                            {% for key, value in months.items %}
+                            <option value="{{ key }}" {% if form.initial.publish.month == key %} selected {% endif %}>
+                                {{ value }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <select class="custom-select mr-sm-2" name="publish_day" required id="id_publish_day">
+                            {% for day in days %}
+                            <option value="{{ day }}" {% if form.initial.publish.day == day %} selected {% endif %}>
+                                {{ day }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <select class="custom-select mr-sm-2" name="publish_year" required id="id_publish_year">
+                            {% for year in years %}
+                            <option value="{{ year }}" {% if form.initial.publish.year == year %} selected {% endif %}>
+                                {{ year }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}
+Sign Up
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col col-6">
+            <h3>Sign Up</h3><br>
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" value="{{ ex_form.first_name }}" class="form-control">
+                        {{ form.first_name.errors.as_text }}
+                    </div>
+                    <div class="form-group col">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" value="{{ ex_form.last_name }}" class="form-control">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>Email</label>
+                        <input type="email" name="email" value="{{ ex_form.email }}" class="form-control" required>
+                        <small class="form-text text-danger">
+                            {{ form.email.errors.as_text }}
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>Username</label>
+                        <input type="text" name="username" value="{{ ex_form.username }}" class="form-control" required>
+                        <small class="text-danger">
+                            {{ form.username.errors.as_text }}
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>Password</label>
+                        <input type="password" name="password1" class="form-control" required>
+                    </div>
+                    <div class="form-group col">
+                        <label>Password Confirm</label>
+                        <input type="password" name="password2" class="form-control" required>
+                    </div>
+                    <small class="text-danger">
+                        {{ form.password2.errors.as_text }}
+                    </small>
+                </div>
+                <br>
+                <!-- <div class="form-row">
+                    <div class="form-group col">
+                        <div class="custom-file mb-3">
+                            <label class="custom-file-label" for="customFile">Choose a profile picture</label>
+                            <input type="file" class="custom-file-input" name="image" id="customFile" accept="image/*">
+                        </div>
+                    </div>
+                </div> -->
+                <button class="btn btn-primary" type="submit">Sign me up!</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{{ form.initial.email }}
+{% endblock content %}
