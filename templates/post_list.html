@@ -2,18 +2,26 @@
 {% load humanize %}
 
 {% block title %}
+{% if 'user/' in request.path %}
+All posts by {{ user_post }}
+{% else %}
 All posts
+{% endif %}
 {% endblock title %}
 
 {% block content %}
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
+    <ol class="breadcrumb bg-light">
         {% if 'user/' in request.path %}
         <li class="breadcrumb-item"><a href="{% url 'posts:post_list' %}">All Posts</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ user_post }}'s posts</li>
         {% elif request.GET.q %}
         <li class="breadcrumb-item"><a href="{% url 'posts:post_list' %}">All Posts</a></li>
+        {% if not posts %}
+        <li class="breadcrumb-item active" aria-current="page">No results for "{{ request.GET.q }}"</li>
+        {% else %}
         <li class="breadcrumb-item active" aria-current="page">Search results for "{{ request.GET.q }}"</li>
+        {% endif %}
         {% else %}
         <li class="breadcrumb-item active" aria-current="page">All Posts</li>
         {% endif %}

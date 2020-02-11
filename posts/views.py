@@ -1,4 +1,5 @@
 from django.contrib import messages, auth
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import Http404
@@ -7,10 +8,10 @@ from django.utils import timezone
 
 from .forms import PostCreateForm
 from .models import Post
-from .times import (
+from .utils import (
     years,
     months,
-    days
+    days,
 )
 
 
@@ -130,6 +131,6 @@ def post_update(request, post_slug):
 def post_delete(request, post_slug):
     instance = get_object_or_404(Post, slug=post_slug)
     if not request.user == instance.author and not request.user.is_superuser:
-        raise Http404
+        raise PermissionDenied
     instance.delete()
     return redirect('posts:post_list')
